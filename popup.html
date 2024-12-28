@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+  <style>
+    body {
+      width: 400px;
+      min-height: 300px;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                  url('images/greek-pattern.png');
+      color: #e0d5c1;
+      font-family: 'Forum', serif;
+    }
+
+    .container {
+      border: 2px solid #8b7355;
+      border-radius: 8px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .quote {
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .philosopher {
+      font-family: 'Cinzel Decorative', serif;
+      color: #c4a484;
+      text-align: right;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .category {
+      color: #8b7355;
+      font-size: 0.9em;
+      text-align: right;
+      font-style: italic;
+    }
+
+    .greek-border {
+      height: 20px;
+      background: url('images/greek-border.png') repeat-x;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="greek-border"></div>
+    <div class="quote" id="quote"></div>
+    <div class="philosopher" id="philosopher"></div>
+    <div class="category" id="category"></div>
+    <div class="greek-border"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

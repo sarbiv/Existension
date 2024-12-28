@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Philosophy 101</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel&family=Cinzel+Decorative&family=Forum&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --category-gradient-start: rgba(0, 43, 94, 0.85);
+      --category-gradient-end: rgba(0, 27, 58, 0.85);
+      --border-color: rgba(204, 204, 204, 0.5);
+      --spacing-unit: 1rem;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.2); /* 20% white overlay */
+      pointer-events: none; /* allows clicking through */
+      z-index: -1; /* behind the main content */
+    }
+
+    body {
+      background: url("https://static.dw.com/image/62304904_605.jpg") no-repeat center center;
+      background-size: cover;
+      background-attachment: fixed;
+      background-color: #ececec;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+
+      font-family: 'Forum', sans-serif;
+      line-height: 1.5;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 1rem;
+      font-family: 'Cinzel Decorative', serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-top: 1rem;
+      margin-left: 1rem;
+      text-align: left;
+      color: #333;
+      font-style: italic;
+      font-size: 1rem;
+    }
+
+    h3 {
+      text-align: left;
+      margin-left: 1rem;
+    }
+
+    /* ASCII flowchart style at the top */
+    pre.flowchart {
+      font-family: "Courier New", monospace;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .main-wrapper {
+      min-height: 100vh; /* 100% of the viewport height */
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+
+    /* ASCII art comment box with sheep and AI coder
+                 .----.
+       /^-----^\ |AI: | Let's explore some
+      / . . .  \|----| philosophical concepts!
+     /  \_/   \ |    |
+    |         | |    |  @_@ < Me, the helpful
+     \  ^_^  /  |    |       coding assistant
+      \     /   |    |
+       \___/    '----'
+         ||
+         ||     */
+    
+    /* The outer box for each main category */
+    .category {
+      background: linear-gradient(to right, var(--category-gradient-start), var(--category-gradient-end));
+      color: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin: var(--spacing-unit) 0;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 1200px; /* Optional: Limits width on large screens */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+
+    /* Clickable header for each category */
+    .toggle {
+      display: block;
+      padding: 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      position: relative;
+      transition: background-color 0.3s ease; /* Removed opacity */
+    }
+    .toggle:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    /* Arrow rotation */
+    .toggle::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    .toggle.open::before {
+      transform: rotate(90deg);
+    }
+
+
+    /* Collapsible container for the approaches inside each category */
+    .content {
+      display: none; /* collapsed by default */
+      margin-left: 1.5rem;
+      border-left: 2px dashed rgba(255,255,255,0.3);
+      padding-left: 0.75rem;
+    }
+
+    /* Each philosopher/method box */
+    .approach {
+      margin: 0.8rem 0;
+      padding: 0.5rem;
+      border: 1px solid rgba(204, 204, 204, 0.5); /* Semi-transparent border */
+      border-radius: 4px;
+      cursor: pointer; /* clickable for highlight logic */
+      transition: background-color 0.3s; /* Removed opacity */
+      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+      color: #000;
+      position: relative;
+    }
+
+    .approach:hover {
+      background-color: rgba(243, 243, 243, 0.9);
+    }
+
+    /* Multi-select highlight/dim classes */
+    .approach.highlight {
+      font-weight: 600;
+      /* background-color: #c9effa; */
+      background-color: rgba(201, 239, 250, 0.9);
+    }
+    .approach.dim {
+      background-color: rgba(255, 255, 255, 0.5); /* More transparent white */
+      color: #666;
+    }
+
+    /* Sub-toggles within an approach (to show Problem/Tool/Takeaway) */
+    .sub-toggle {
+      margin-top: 0.4rem;
+      padding: 0.3rem;
+      background-color: #eee;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      display: inline-block;
+    }
+    .sub-toggle:hover {
+      background-color: #ddd;
+    }
+    .sub-toggle::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 4px;
+      transition: transform 0.3s ease;
+    }
+    .sub-toggle.open::before {
+      transform: rotate(90deg);
+    }
+
+    /* Container for the problem/solution/takeaway details */
+    .sub-content {
+      display: none; /* collapsed by default */
+      margin-left: 1rem;
+      margin-top: 0.3rem;
+      padding-left: 0.5rem;
+      border-left: 2px dotted rgba(204, 204, 204, 0.5); /* Semi-transparent border */
+      background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
+      transition: background-color 0.3s; /* Removed opacity */
+    }
+
+
+    /* For labeling within the sub-content */
+    .label {
+      font-weight: 700;
+      font-style: italic;
+      font-family: "Forum", serif;
+      color: #000;
+      padding: 0 4px;            /* a little padding for the highlight effect */
+      border-radius: 3px;
+    }
+
+    /* Lists for problem/solution/takeaway */
+    ul {
+      list-style: none;
+      margin: 0.5rem 0;
+      padding: 0;
+    }
+    li {
+      margin: 0.2rem 0;
+    }
+
+    /* Concluding Thoughts styling */
+    .conclusion {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid #bbb;
+    }
+
+    .author-notice {
+      position: fixed;         /* ensures it stays in place on scroll */
+      bottom: 10px;            /* 10px from the bottom */
+      right: 10px;             /* 10px from the right */
+      background-color: rgba(0,0,0,0.4); /* semi-transparent background */
+      color: #fff;             /* white text for contrast */
+      padding: 4px 8px;        /* some spacing around text */
+      border-radius: 4px;      /* slightly rounded corners */
+      font-size: 0.85rem;      /* smaller text size, optional */
+      z-index: 9999;           /* ensure it’s on top of other elements if needed */
+    }
+
+    p, li, span, div {
+      font-family: 'Forum', sans-serif;
+    }
+
+    /* optional
+    h1, h2, h3, p, li, span {
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    } */
+
+    /* Styles for Tablets and Smaller Devices (max-width: 768px) */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem; /* Reduce main title size */
+        margin-left: 0.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem; /* Reduce subtitle size */
+        margin-left: 0.5rem;
+      }
+
+      h3 {
+        font-size: 1.5rem; /* Adjust section headings */
+        margin-left: 0.5rem;
+      }
+
+      .category {
+        padding: 0.4rem; /* Reduce padding */
+        max-width: 1000px; /* Adjust max-width */
+      }
+
+      .approach {
+        padding: 0.4rem; /* Reduce padding in approaches */
+        font-size: 0.9rem; /* Adjust font size */
+      }
+
+      .toggle, .sub-toggle {
+        padding: 0.5rem; /* Adjust padding for toggles */
+        font-size: 1rem; /* Adjust font size */
+      }
+
+      .author-notice {
+        font-size: 0.75rem; /* Smaller notice font */
+        bottom: 5px;
+        right: 5px;
+      }
+    }
+
+    /* Styles for Smartphones and Smaller Devices (max-width: 480px) */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem; /* Further reduce main title */
+        margin-left: 0.3rem;
+      }
+
+      h2 {
+        font-size: 1.2rem; /* Further reduce subtitle */
+        margin-left: 0.3rem;
+      }
+
+      h3 {
+        font-size: 1.2rem; /* Further adjust section headings */
+        margin-left: 0.3rem;
+      }
+
+      .category {
+        padding: 0.3rem; /* Further reduce padding */
+        max-width: 100%; /* Full width */
+      }
+
+      .approach {
+        padding: 0.3rem; /* Further reduce padding */
+        font-size: 0.8rem; /* Further adjust font size */
+      }
+
+      .toggle, .sub-toggle {
+        padding: 0.4rem; /* Further adjust padding for toggles */
+        font-size: 0.9rem; /* Further adjust font size */
+      }
+
+      .author-notice {
+        font-size: 0.65rem; /* Smaller notice font */
+        bottom: 3px;
+        right: 3px;
+      }
+    }
+
+    /* Audio player styling */
+    .audio-control {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .audio-control:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .audio-control svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .audio-control.playing {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* For mobile responsiveness */
+    @media (max-width: 480px) {
+      .audio-control {
+        padding: 0.2rem;
+      }
+      
+      .audio-control svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<h1>Philosophy cheat sheet</h1>
+<h2>(Alt+Click to Toggle Selection, Click to Reset)</h2>
+  <div class="main-wrapper">
+    <!-- ======= Category 1: Existential Dread & Meaning ======= -->
+    <div class="category">
+      <div class="toggle">1. Existential Dread &amp; Meaning</div>
+      <div class="content">
+
+        <!-- Kierkegaard -->
+        <div class="approach" data-id="kierkegaard">
+          <div style="display: flex; align-items: center;">
+            <strong>Kierkegaard's Leap of Faith</strong>
+            <button class="audio-control" data-audio="kierkegaard.mp3" aria-label="Play Kierkegaard audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Embrace uncertainty by making a "leap of faith" despite lack of absolute proof.
+
+          <!-- Sub-toggle to show Problem/Tool/Takeaway -->
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Rational arguments alone cannot eliminate existential anxiety or prove life's meaning.</li>
+              <li><span class="label">Tool:</span> Fully commit (leap of faith) to values/beliefs, often religious, despite uncertainty.</li>
+              <li><span class="label">Takeaway:</span> By choosing something meaningful amid uncertainty, we reduce existential dissonance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Camus -->
+        <div class="approach" data-id="camus">
+          <div style="display: flex; align-items: center;">
+            <strong>Camus's Revolt Against the Absurd</strong>
+            <button class="audio-control" data-audio="camus.mp3" aria-label="Play Camus audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Live in "rebellion" against a seemingly indifferent universe by creating meaning.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> The universe appears indifferent; meaning is not guaranteed.</li>
+              <li><span class="label">Tool:</span> Confront the Absurd directly and actively construct personal or communal purpose.</li>
+              <li><span class="label">Takeaway:</span> Embracing life passionately, even when it's absurd, can restore joy and choice.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Frankl -->
+        <div class="approach" data-id="frankl">
+          <div style="display: flex; align-items: center;">
+            <strong>Frankl's Logotherapy</strong>
+            <button class="audio-control" data-audio="frankl.mp3" aria-label="Play Frankl audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Finding one's personal "why" (purpose) is key to addressing despair or emptiness.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> People feel an existential void or emptiness when they see no purpose.</li>
+              <li><span class="label">Tool:</span> Reflect on unique life meaning—through creativity, love, moral responsibility.</li>
+              <li><span class="label">Takeaway:</span> Discovering a personal "why" fosters resilience and direction against despair.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Niemeyer -->
+        <div class="approach" data-id="niemeyer">
+          <div style="display: flex; align-items: center;">
+            <strong>Niemeyer's Meaning Reconstruction</strong>
+            <button class="audio-control" data-audio="niemeyer.mp3" aria-label="Play Niemeyer audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Reformulate life narratives to integrate trauma/loss and maintain identity.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Trauma, loss, or drastic change can shatter one's sense of meaning.</li>
+              <li><span class="label">Tool:</span> Actively rewrite life stories that incorporate the loss yet preserve continuity.</li>
+              <li><span class="label">Takeaway:</span> Narrative reframing weaves new meaning into painful experiences, easing dissonance.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= Category 2: The Individual vs. Society ======= -->
+    <div class="category">
+      <div class="toggle">2. The Individual vs. Society</div>
+      <div class="content">
+
+        <!-- Social Contracts -->
+        <div class="approach" data-id="social-contracts">
+          <div style="display: flex; align-items: center;">
+            <strong>Social Contracts (Hobbes, Locke, Rousseau)</strong>
+            <button class="audio-control" data-audio="social-contracts.mp3" aria-label="Play Social Contracts audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Balancing freedom with collective obligations for security and justice.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Balancing individual freedom with collective obligations.</li>
+              <li><span class="label">Tool:</span> Voluntarily cede certain freedoms for mutual benefits like order and security.</li>
+              <li><span class="label">Takeaway:</span> Accepting these responsibilities eases tension between personal desires and community needs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Rawls -->
+        <div class="approach" data-id="rawls">
+          <div style="display: flex; align-items: center;">
+            <strong>Rawls's Reflective Equilibrium</strong>
+            <button class="audio-control" data-audio="rawls.mp3" aria-label="Play Rawls audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Adjust moral principles/judgments until they form a coherent, fair system.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Different moral intuitions and social structures can clash.</li>
+              <li><span class="label">Tool:</span> Iterative refinement of principles until they align with a stable notion of fairness.</li>
+              <li><span class="label">Takeaway:</span> This bridging process unites individual aspirations with communal justice.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Confucian -->
+        <div class="approach" data-id="confucian">
+          <div style="display: flex; align-items: center;">
+            <strong>Confucian Harmony (Ren &amp; Li)</strong>
+            <button class="audio-control" data-audio="confucian.mp3" aria-label="Play Confucian audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Cultivate benevolence and proper conduct for social unity.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Maintaining social order while respecting individual moral cultivation.</li>
+              <li><span class="label">Tool:</span> Ren (benevolence) and Li (ritual/conduct) unify personal virtue with communal norms.</li>
+              <li><span class="label">Takeaway:</span> Strong interpersonal ethics and respectful ritual reduce self–society dissonance.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= Category 3: Rational vs. Irrational Drives ======= -->
+    <div class="category">
+      <div class="toggle">3. Rational vs. Irrational Drives</div>
+      <div class="content">
+
+        <!-- Freud -->
+        <div class="approach" data-id="freud">
+          <div style="display: flex; align-items: center;">
+            <strong>Freudian Psychoanalysis</strong>
+            <button class="audio-control" data-audio="freud.mp3" aria-label="Play Freud audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Talk therapy to bring unconscious desires into awareness, easing conflict.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Unconscious drives (id) clash with social/moral demands (superego).</li>
+              <li><span class="label">Tool:</span> Analysis reveals repressed conflicts, integrating them more adaptively.</li>
+              <li><span class="label">Takeaway:</span> Self-awareness of hidden motives reduces inner tension and fosters healthier behavior.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Jung -->
+        <div class="approach" data-id="jung">
+          <div style="display: flex; align-items: center;">
+            <strong>Jungian Individuation</strong>
+            <button class="audio-control" data-audio="jung.mp3" aria-label="Play Jung audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Integrate unconscious archetypes (shadow, anima/animus) to achieve wholeness.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Psyche is fragmented by archetypal forces (shadow, persona, etc.).</li>
+              <li><span class="label">Tool:</span> Individuation: a journey of reconciling unconscious elements with conscious identity.</li>
+              <li><span class="label">Takeaway:</span> Embracing shadow aspects reduces internal conflict and promotes coherence.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CBT -->
+        <div class="approach" data-id="cbt">
+          <div style="display: flex; align-items: center;">
+            <strong>Cognitive-Behavioral Therapy (CBT)</strong>
+            <button class="audio-control" data-audio="cbt.mp3" aria-label="Play CBT audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Identify, challenge, and replace distorted thoughts to align with rational ideals.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Negative thinking patterns or cognitive distortions cause anxiety/depression.</li>
+              <li><span class="label">Tool:</span> Systematically replace irrational beliefs with balanced, evidence-based ones.</li>
+              <li><span class="label">Takeaway:</span> Thought restructuring diminishes dissonance between rational ideals and ingrained reactions.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= Category 4: Mindfulness & Eastern ======= -->
+    <div class="category">
+      <div class="toggle">4. Mindfulness &amp; Eastern Approaches</div>
+      <div class="content">
+
+        <!-- Buddhism -->
+        <div class="approach" data-id="buddhism">
+          <div style="display: flex; align-items: center;">
+            <strong>Buddhist Meditation &amp; Middle Way</strong>
+            <button class="audio-control" data-audio="buddhism.mp3" aria-label="Play Buddhism audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Recognize impermanence and reduce suffering via mindful awareness.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Attachment to fleeting desires and aversions leads to dukkha (suffering).</li>
+              <li><span class="label">Tool:</span> Meditation, Noble Eightfold Path, insight into impermanence and non-self.</li>
+              <li><span class="label">Takeaway:</span> Mindful observation eases existential tension and fosters equanimity.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Taoism -->
+        <div class="approach" data-id="taoism">
+          <div style="display: flex; align-items: center;">
+            <strong>Taoist Wu Wei</strong>
+            <button class="audio-control" data-audio="taoism.mp3" aria-label="Play Taoism audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Effortless action aligned with nature's flow, avoiding rigidity.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> Struggling against life's natural course creates conflict.</li>
+              <li><span class="label">Tool:</span> Wu Wei (non-forcing) aligns actions spontaneously with the Tao (way of nature).</li>
+              <li><span class="label">Takeaway:</span> Letting go of excessive control reduces tension and promotes harmony.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= Category 5: Free Will vs. Determinism ======= -->
+    <div class="category">
+      <div class="toggle">5. Free Will vs. Determinism</div>
+      <div class="content">
+
+        <!-- Compatibilism -->
+        <div class="approach" data-id="compatibilism">
+          <div style="display: flex; align-items: center;">
+            <strong>Compatibilism (Hume, Dennett)</strong>
+            <button class="audio-control" data-audio="compatibilism.mp3" aria-label="Play Compatibilism audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          Define free will as acting according to one's nature/desires, even if causally determined.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> If events are deterministic, how can we hold moral responsibility?</li>
+              <li><span class="label">Tool:</span> Redefine "free" as voluntary alignment with one's own nature, not random choice.</li>
+              <li><span class="label">Takeaway:</span> This interpretation preserves accountability while accepting causal processes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pragmatic Approaches -->
+        <div class="approach" data-id="william-james">
+          <div style="display: flex; align-items: center;">
+            <strong>Pragmatic Approaches (William James)</strong>
+            <button class="audio-control" data-audio="william-james.mp3" aria-label="Play William James audio">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div><br/>
+          If free will vs. determinism is unresolvable, pick the stance that fosters flourishing.
+
+          <div class="sub-toggle">Details</div>
+          <div class="sub-content">
+            <ul>
+              <li><span class="label">Problem:</span> We can't conclusively prove/disprove free will.</li>
+              <li><span class="label">Tool:</span> Treat it as a practical choice; choose what best promotes moral growth and well-being.</li>
+              <li><span class="label">Takeaway:</span> The pragmatic benefits of a belief can override the need for absolute theoretical certainty.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= Category 6: Concluding Thoughts ======= -->
+    <div class="category">
+      <div class="toggle">6. Concluding Thoughts</div>
+      <div class="content conclusion">
+        <p><strong>Plurality of Strategies</strong>: Each thinker offers different "solutions," from existential courage (Camus) to faith (Kierkegaard), from psychoanalytic insight (Freud, Jung) to mindfulness (Buddhism), from contractualism (Rousseau) to pragmatic ethics (James).</p>
+        <p><strong>No Universal "Fix"</strong>: These are ongoing practices or frameworks rather than once-and-for-all answers, encouraging personal engagement, reflection, and adaptation.</p>
+        <p><strong>Bridging Dissonances</strong>: Common threads include <em>active responsibility</em> (acknowledging our role in shaping meaning), <em>self-awareness</em> (recognizing unconscious/irrational dimensions), and <em>communal negotiation</em> (balancing individual freedoms with social bonds). Ultimately, bridging these tensions is a <em>lifelong navigation</em> more than a final solution.</p>
+      </div>
+    </div>
+
+    <div class="author-notice">
+      © 2024 Segev Arbiv. All Rights Reserved.
+    </div>
+
+  </div>
+<script type="module">
+  import AudioPlayer from './scripts/audio-player.js';
+  import CategorySystem from './scripts/category-toggles.js';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    AudioPlayer.init();
+    CategorySystem.init();
+  });
+</script>
+</body>
+</html>
