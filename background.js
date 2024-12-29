@@ -18,4 +18,15 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       priority: 2
     });
   }
+});
+
+// Example analytics setup
+chrome.runtime.onInstalled.addListener(function(details) {
+  if (details.reason === "install") {
+    logInstallation();
+  }
+});
+
+chrome.runtime.onStartup.addListener(function() {
+  logDailyActive();
 }); 

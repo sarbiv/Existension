@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Existension",
-  "version": "2.1",
+  "version": "2.2",
   "update_url": "https://github.com/sarbiv/Existension/main/updates.xml",
   "description": "Daily doses of timeless wisdom to illuminate your modern journey",
   "permissions": ["storage", "alarms", "notifications"],
@@ -20,5 +20,11 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "minimum_chrome_version": "88",
+  "author": "segevarbiv@email.com",
+  "homepage_url": "https://github.com/sarbiv/existension",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 } 

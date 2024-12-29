@@ -365,6 +365,72 @@ document.addEventListener('DOMContentLoaded', () => {
       displayQuote(randomQuote);
     }
   });
+
+  const saveBtn = document.getElementById('saveReflection');
+  const viewBtn = document.getElementById('viewHistory');
+  const modal = document.getElementById('historyModal');
+  const closeBtn = document.querySelector('.close');
+  const reflectionInput = document.getElementById('reflection');
+
+  // Load today's reflection if it exists
+  loadTodayReflection();
+
+  saveBtn.addEventListener('click', () => {
+    const entry = {
+      date: new Date().toISOString(),
+      quote: document.querySelector('.quote').textContent,
+      philosopher: document.querySelector('.philosopher').textContent,
+      reflection: reflectionInput.value,
+      category: document.querySelector('.category').textContent
+    };
+
+    chrome.storage.local.get(['reflections'], (data) => {
+      const reflections = data.reflections || [];
+      reflections.push(entry);
+      chrome.storage.local.set({ reflections }, () => {
+        // Show save confirmation
+        saveBtn.textContent = 'Saved!';
+        setTimeout(() => saveBtn.textContent = 'Save Reflection', 2000);
+      });
+    });
+  });
+
+  viewBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+    displayHistory();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  function loadTodayReflection() {
+    const today = new Date().toISOString().split('T')[0];
+    chrome.storage.local.get(['reflections'], (data) => {
+      const reflections = data.reflections || [];
+      const todayEntry = reflections.find(entry => 
+        entry.date.split('T')[0] === today
+      );
+      if (todayEntry) {
+        reflectionInput.value = todayEntry.reflection;
+      }
+    });
+  }
+
+  function displayHistory() {
+    const container = document.getElementById('entriesContainer');
+    chrome.storage.local.get(['reflections'], (data) => {
+      const reflections = data.reflections || [];
+      container.innerHTML = reflections.reverse().map(entry => `
+        <div class="history-entry">
+          <div class="entry-date">${new Date(entry.date).toLocaleDateString()}</div>
+          <div class="entry-quote">${entry.quote}</div>
+          <div class="entry-philosopher">${entry.philosopher}</div>
+          <div class="entry-reflection">${entry.reflection}</div>
+        </div>
+      `).join('');
+    });
+  }
 });
 
 function displayQuote(quoteObj) {
