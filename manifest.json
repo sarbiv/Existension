@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Existension",
   "version": "2.0",
+  "update_url": "https://github.com/sarbiv/Existension/main/updates.xml",
   "description": "Daily doses of timeless wisdom to illuminate your modern journey",
   "permissions": ["storage", "alarms", "notifications"],
   "action": {
