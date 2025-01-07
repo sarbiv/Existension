@@ -1,6 +1,6 @@
 {
   "name": "existension",
-  "version": "3.0",
+  "version": "1.0.0",
   "description": "Daily philosophical quotes and reflections",
   "scripts": {
     "build": "zip -r existension.zip . -x \"*.git*\" -x \"*.github*\" -x \"node_modules/*\" -x \"*.md\" -x \"*.yml\""
