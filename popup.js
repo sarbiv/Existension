@@ -185,7 +185,7 @@ function updateDateDisplay() {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        });
+        }) + ' ⏳';
     }
 }
 
