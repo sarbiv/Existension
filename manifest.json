@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Existension",
-  "version": "2.2",
+  "version": "2.14",
   "update_url": "https://github.com/sarbiv/Existension/main/updates.xml",
   "description": "Daily doses of timeless wisdom to illuminate your modern journey",
   "permissions": ["storage", "alarms", "notifications"],
@@ -26,5 +26,14 @@
   "homepage_url": "https://github.com/sarbiv/existension",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "images/*.jpg",
+      "images/*.png",
+      "lib/*.js",
+      "quotes.js"
+    ],
+    "matches": ["<all_urls>"]
+  }]
 } 

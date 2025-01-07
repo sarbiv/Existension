@@ -5,137 +5,314 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+  <script src="lib/jspdf.umd.min.js"></script>
   <style>
     body {
       width: 400px;
-      min-height: 300px;
+      height: 600px;
       margin: 0;
-      padding: 20px;
-      background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)),
-                  url('images/greek-pattern.png');
-      color: #f8fafc;
+      padding: 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                  url('images/rodin-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0d5c1;
       font-family: 'Forum', serif;
+      overflow: hidden;
     }
 
     .container {
-      border: 2px solid #60a5fa;
-      border-radius: 8px;
+      height: 100%;
       padding: 20px;
-      background: rgba(0, 0, 0, 0.7);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Add a semi-transparent overlay to ensure text readability */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.65);  /* Slight transparency to show the background */
+      z-index: 0;
+    }
+
+    /* Ensure content stays above the overlay */
+    .header,
+    .quote-section,
+    .reflection-section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-section {
+      text-align: center;
+      flex: 0 0 auto;
+      margin: 10px 0;
+      padding: 10px;
+      /* background-color: rgba(255, 255, 255, 0.1); */
+      border-radius: 8px;
+      flex-shrink: 0;
     }
 
     .quote {
-      font-size: 1.2em;
-      line-height: 1.6;
-      margin-bottom: 15px;
-      text-align: center;
-      font-style: italic;
+      font-family: 'Cinzel Decorative', serif;  /* Restored Greek-style font */
+      font-size: 1.3rem;
+      line-height: 1.5;
+      max-height: 250px;
+      overflow: hidden;
+      color: #1a1409;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      font-weight: 500;   /* Medium weight for better readability */
     }
 
     .philosopher {
-      font-family: 'Cinzel Decorative', serif;
-      color: #93c5fd;
-      text-align: right;
-      font-size: 1.1em;
-      margin-bottom: 10px;
+      font-family: 'Forum', serif;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #d4b483;
+      margin: 12px 0;
+      font-weight: 500;
+    }
+
+    .philosopher::before {
+      content: "— ";  /* Add em dash before philosopher name */
+      color: #d4b483;
     }
 
     .category {
-      color: #8b7355;
+      font-family: 'Forum', serif;
+      font-size: 1.3rem;
+      color: #1b1206;
+      letter-spacing: 1px;
+      margin: 8px 0;
+    }
+
+    .current-date {
+      font-family: 'Cinzel Decorative', serif;
+      color: #93c5fd;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .nav-btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+
+    .icon {
       font-size: 0.9em;
-      text-align: right;
-      font-style: italic;
+      margin-right: 4px;
+    }
+    
+    #exportJournal {
+      background: #4f46e5;
     }
 
-    .greek-border {
-      height: 20px;
-      background: url('images/greek-border.png') repeat-x;
-      margin: 15px 0;
+    .export-btn {
+      background: #4f46e5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .journal-section {
-      margin-top: 20px;
-      border-top: 1px solid #60a5fa;
-      padding-top: 15px;
+    .btn.saved {
+      background: #059669;
+      transition: background-color 0.3s ease;
+    }
+
+    .reflection-section {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .parchment {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      background: linear-gradient(to right bottom, #f8f4e9, #eae0c9);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parchment::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('images/parchment-texture.png');
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .quill-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-family: 'Cinzel Decorative', serif;
+      color: #2c1810;
     }
 
     .reflection-input {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.3);
-      border: 1px solid #60a5fa;
-      color: #f8fafc;
-      padding: 10px;
-      border-radius: 4px;
+      flex: 1;
+      min-height: 60px;
+      resize: none;
+      height: 80px;
+      min-height: 80px;
+      /* max-height: 150px; */
+      font-size: 0.95rem;
+      line-height: 1.5;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(139, 115, 85, 0.3);
       font-family: 'Forum', serif;
-      resize: vertical;
+      color: #2c1810;
+      padding: 0.5rem;
+      overflow-y: auto;
+      transition: border-color 0.3s ease;
+      margin-bottom: 5px;
+    }
+
+    .reflection-input:focus {
+      outline: none;
+      border-bottom-color: #8b7355;
     }
 
     .controls {
       display: flex;
-      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
       margin-top: 10px;
     }
 
-    .btn {
-      background: #60a5fa;
-      color: #f8fafc;
+    .btn-save, .btn-export {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 8px 12px;
       border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
       cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 0;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #8b7355, #c4a484);
+      color: #fff;
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #fff;
+    }
+
+    .btn-save:hover, .btn-export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-save:active, .btn-export:active {
+      transform: translateY(0);
+    }
+
+    /* Animation for save confirmation */
+    @keyframes saveConfirm {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .saved {
+      animation: saveConfirm 0.5s ease;
+    }
+
+    /* Header with date */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Cinzel Decorative', serif;
+      color: #2c1810;
+    }
+
+    #currentDate {
+      font-size: 1.1rem;
+    }
+
+    .note {
       font-family: 'Forum', serif;
+      font-size: 1.1rem;  /* Increased from smaller size */
+      color: #231f08;     /* Golden color for special dates */
+      margin-top: 10px;
+      font-style: italic;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.9);
+    /* Optional: Add a subtle glow to birthday notes */
+    .note:contains("🎂") {
+      animation: subtle-glow 2s ease-in-out infinite;
     }
 
-    .modal-content {
-      background: #1e293b;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #60a5fa;
-      width: 80%;
-      border-radius: 8px;
-      max-height: 70vh;
-      overflow-y: auto;
+    @keyframes subtle-glow {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="greek-border"></div>
-    <div class="quote" id="quote"></div>
-    <div class="philosopher" id="philosopher"></div>
-    <div class="category" id="category"></div>
-    <div class="greek-border"></div>
-    
-    <div class="journal-section">
-      <textarea 
-        id="reflection" 
-        placeholder="What are your thoughts on today's wisdom?"
-        rows="3"
-        class="reflection-input"
-      ></textarea>
-      <div class="controls">
-        <button id="saveReflection" class="btn">Save Reflection</button>
-        <button id="viewHistory" class="btn">View History</button>
-      </div>
+    <div class="header">
+        <div id="currentDate"></div>
     </div>
 
-    <div id="historyModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="entriesContainer"></div>
-      </div>
+    <div class="quote-section">
+        <div class="quote"></div>
+        <div class="philosopher"></div>
+        <div class="category"></div>
+        <div class="note"></div>
+    </div>
+
+    <div class="reflection-section">
+        <div class="parchment">
+            <div class="quill-header">
+                <span class="quill-icon">✒️</span>
+                <span>Your Reflection</span>
+            </div>
+            <textarea 
+                id="reflection" 
+                placeholder="Let your thoughts flow freely as you contemplate today's wisdom..."
+                class="reflection-input"
+            ></textarea>
+            <div class="controls">
+                <button id="saveReflection" class="btn-save">
+                    <span class="save-icon">📜</span>
+                    <span class="save-text">Preserve Thoughts</span>
+                </button>
+                <button id="exportJournal" class="btn-export">
+                    <span class="export-icon">📖</span>
+                    <span class="export-text">Chronicle</span>
+                </button>
+            </div>
+        </div>
     </div>
   </div>
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 </html> 
