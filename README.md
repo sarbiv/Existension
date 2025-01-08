@@ -9,6 +9,7 @@ A beautiful Chrome extension that delivers daily philosophical quotes in an anci
 - Categorized quotes by philosophical fields
 - Daily reminder notifications
 - Elegant typography and styling
+- Integrate your own reflections and download a journal!
 
 ## Installation
 
@@ -23,17 +24,6 @@ A beautiful Chrome extension that delivers daily philosophical quotes in an anci
 - Click the extension icon to view today's quote
 - A new quote will be selected each day
 - You'll receive a daily notification when a new quote is available
-
-## Required Assets
-
-Before loading the extension, make sure to add:
-1. Icon files in the `icons` directory:
-   - icon16.png (16x16)
-   - icon48.png (48x48)
-   - icon128.png (128x128)
-2. Images in the `images` directory:
-   - greek-pattern.png (background pattern)
-   - greek-border.png (decorative border)
 
 ## Contributing
 
